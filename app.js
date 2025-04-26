@@ -19,6 +19,16 @@ const handler = function () {
     clickedBtn.disabled = true; 
 
     const itemDiv = this.closest('.item');
+    const imgContainer = itemDiv.querySelector('.img');
+    if (imgContainer) {
+        imgContainer.style.cssText = `
+            border: 2px solid #C93A0E;
+            border-radius: 17px;
+            overflow: hidden;
+            transition: border-color 0.3s ease;
+        `;
+    }
+
     const name = itemDiv.querySelector('.info span').textContent;
     const price = parseFloat(itemDiv.querySelector('.info h4').textContent.replace('$', '')).toFixed(2);
 
@@ -76,9 +86,8 @@ const handler = function () {
             btn1.style.backgroundColor = 'white'; 
             const img = btn1.querySelector('img'); 
             if (img) {
-                img.style.filter = 'invert(24%) sepia(91%) saturate(7471%) hue-rotate(356deg) brightness(96%) contrast(105%)'; // Change icon color to red
+                img.style.filter = 'invert(24%) sepia(91%) saturate(7471%) hue-rotate(356deg) brightness(96%) contrast(105%)'; 
             }
-
         });
         btn1.addEventListener('mouseleave', function () {
             btn1.style.backgroundColor = ''; 
@@ -111,7 +120,7 @@ const handler = function () {
             btn2.style.backgroundColor = 'white'; 
             const img = btn2.querySelector('img'); 
             if (img) {
-                img.style.filter = 'invert(24%) sepia(91%) saturate(7471%) hue-rotate(356deg) brightness(96%) contrast(105%)'; // Change icon color to red
+                img.style.filter = 'invert(24%) sepia(91%) saturate(7471%) hue-rotate(356deg) brightness(96%) contrast(105%)'; 
             }
         });
         
@@ -146,7 +155,7 @@ function updateDisplay() {
     const cartTextElement = cartElement.querySelector('.content p'); 
     if (cartTextElement) {
         if (cartItemNames.length > 0) {
-            cartTextElement.innerText = cartItemNames[0];
+            cartTextElement.innerText = cartItemNames[0]; 
         } else {
             cartTextElement.innerText = `Your added items will appear here`; 
         }
@@ -154,15 +163,19 @@ function updateDisplay() {
     }
 }
 
+
 function initializeButtons() {
     const buttons = document.querySelectorAll('.item button');
     buttons.forEach(button => {
+        
         const newButton = button.cloneNode(true);
         button.parentNode.replaceChild(newButton, button);
 
+        
         newButton.addEventListener('click', handler);
     });
 }
+
 
 
 function increment() {
@@ -181,13 +194,21 @@ function increment() {
     let currentQuantity = parseInt(quantityElement.textContent.replace('x', '')) || 1;
     currentQuantity += 1;
 
+    
     quantityElement.textContent = `${currentQuantity}x`;
     priceElement.textContent = `$${(unitPrice * currentQuantity).toFixed(2)}`;
+
+    
+    const counterDisplay = itemDiv.querySelector('button div p');
+    if (counterDisplay) {
+        counterDisplay.innerText = currentQuantity;
+    }
 
     totalItems++;
     updateCartTotal();
     updateDisplay();
 }
+
 
 function decrement() {
     const itemDiv = this.closest('.item');
@@ -206,8 +227,15 @@ function decrement() {
 
     if (currentQuantity > 1) {
         currentQuantity--;
+        
         quantityElement.textContent = `${currentQuantity}x`;
         priceElement.textContent = `$${(unitPrice * currentQuantity).toFixed(2)}`;
+
+        
+        const counterDisplay = itemDiv.querySelector('button div p');
+        if (counterDisplay) {
+            counterDisplay.innerText = currentQuantity;
+        }
 
         totalItems--;
         updateCartTotal();
@@ -243,25 +271,31 @@ function resetButtonStyles(button) {
 }
 
 function resetAddToCartButton(itemName, originalButton) {
+    
     originalButton.innerHTML = '<img src="./assets/images/icon-add-to-cart.svg" alt="">Add to Cart';
     originalButton.disabled = false; 
     originalButton.style = ''; 
 
+    
     const quantityControl = originalButton.querySelector('div');
     if (quantityControl) {
         originalButton.removeChild(quantityControl);
     }
 
+    
     const index = cartItemNames.indexOf(itemName);
     if (index > -1) {
         cartItemNames.splice(index, 1);
     }
 
+    
     const newButton = originalButton.cloneNode(true);
     originalButton.parentNode.replaceChild(newButton, originalButton);
 
+    
     newButton.addEventListener('click', handler);
 
+    
     updateDisplay();
     updateCartHeight(); 
 }
@@ -276,6 +310,7 @@ function cartUpdated() {
     }
 
     contentCart.innerText = '';
+    
     contentCart.classList.add('content-cart');
 
     const divBox = document.createElement('div');
@@ -322,6 +357,7 @@ function updateCartTotal() {
     cartItems.forEach(item => {
         const priceText = item.querySelector('.itemsPrice')?.textContent.replace('$', '').trim();
 
+        
         const price = parseFloat(priceText);
 
         if (!isNaN(price)) {
@@ -329,6 +365,7 @@ function updateCartTotal() {
         }
     });
 
+    
     const totalPriceElement = document.querySelector('#cart-total-price');
     if (totalPriceElement) {
         totalPriceElement.innerText = `$${total.toFixed(2)}`;
@@ -347,17 +384,21 @@ function deliveryInfo(element) {
 }
 
 function confirmBtn(element) {
-    console.log("Confirm button getting listener attached.");
+    console.log("Confirm button getting listener attached."); 
     element.innerText = 'Confirm Order';
     element.addEventListener('click', function () {
-        console.log("Confirm Order button clicked.");
+        console.log("Confirm Order button clicked."); 
 
+        
         if (!orderInformation || orderInformation.children.length === 0) {
             console.log("Cart is empty, cannot confirm order.");
             return; 
         }
         console.log("Proceeding to create popup..."); 
 
+        
+
+        
         const overlay = document.createElement('div');
         overlay.style.cssText = `
             position: fixed;
@@ -374,6 +415,7 @@ function confirmBtn(element) {
             transition: opacity 0.3s ease;
         `;
 
+        
         const popUp = document.createElement('div');
         popUp.style.cssText = `
             background-color: white;
@@ -390,12 +432,14 @@ function confirmBtn(element) {
             transition: transform 0.3s ease;
         `;
 
+        
         const headerDiv = document.createElement('div');
         headerDiv.style.display = 'flex';
         headerDiv.style.flexDirection = 'column';
         headerDiv.style.gap = '8px';
 
         const iconImg = document.createElement('img');
+        
         iconImg.src = './assets/images/icon-order-confirmed.svg';
         iconImg.alt = 'Confirmed';
         iconImg.style.width = '32px'; 
@@ -408,6 +452,7 @@ function confirmBtn(element) {
         title.style.fontSize = '24px'; 
         title.style.fontWeight = 'bold'; 
         title.style.color = 'hsl(14, 65%, 9%)'; 
+
         const subTitle = document.createElement('p');
         subTitle.innerText = 'We hope you enjoy your food!';
         subTitle.style.margin = '0';
@@ -419,6 +464,7 @@ function confirmBtn(element) {
         headerDiv.appendChild(subTitle);
         popUp.appendChild(headerDiv);
 
+        
         const orderItemsContainer = document.createElement('div');
         orderItemsContainer.style.cssText = `
             background-color: hsl(30, 33%, 94%); /* Light beige background matching the image */
@@ -456,6 +502,7 @@ function confirmBtn(element) {
                 
             `;
 
+            
             const itemName = cartItem.querySelector('.OrderName')?.innerText;
             let itemImageSrc = './assets/images/image-waffle-thumbnail.jpg'; 
             const productItemDiv = Array.from(item).find(div => div.querySelector('.info span')?.textContent === itemName);
@@ -463,21 +510,28 @@ function confirmBtn(element) {
             if (productItemDiv) {
                 const imgElement = productItemDiv.querySelector('.img img');
                 if (imgElement && imgElement.src) {
+                    
                     const basePath = imgElement.src.substring(0, imgElement.src.lastIndexOf('-'));
                     const extension = imgElement.src.substring(imgElement.src.lastIndexOf('.'));
                     const potentialThumbnail = `${basePath}-thumbnail${extension}`;
+                    
+                    
                     itemImageSrc = potentialThumbnail;
 
+                    
+                    
                 }
             }
 
             const itemImg = document.createElement('img');
             itemImg.src = itemImageSrc;
             itemImg.alt = itemName || 'Item';
-            itemImg.style.width = '40px'; 
+            itemImg.style.width = '40px'; /* Smaller image */
             itemImg.style.height = '40px';
             itemImg.style.borderRadius = '4px';
+            
             itemImg.onerror = () => { itemImg.src = './assets/images/image-waffle-thumbnail.jpg'; }; 
+
             const itemTextDiv = document.createElement('div');
             itemTextDiv.style.cssText = `
                 display: flex;
@@ -503,8 +557,10 @@ function confirmBtn(element) {
             const quantityText = cartItem.querySelector('.quantity')?.innerText || '1x';
             const unitPrice = cartItem.querySelector('.oneitemPrice')?.innerText.replace('@ ', '') || '$0.00';
 
+            
             itemQuantityPriceP.innerHTML = `<span style="color: hsl(14, 86%, 42%); font-weight: bold;">${quantityText}</span> @ ${unitPrice}`;
 
+            
             itemQuantityPriceP.style.cssText = `
                 margin: 0;
                 font-size: 12px;
@@ -542,12 +598,14 @@ function confirmBtn(element) {
             itemDiv.appendChild(itemTotalPriceP);
             orderItemsContainer.appendChild(itemDiv);
 
+            
             if (index === cartItems.length - 1) {
                 itemDiv.style.borderBottom = 'none';
                 itemDiv.style.paddingBottom = '0';
             }
         });
 
+        
         const divider = document.createElement('div');
         divider.style.cssText = `
             height: 1px;
@@ -557,6 +615,7 @@ function confirmBtn(element) {
         `;
         orderItemsContainer.appendChild(divider);
 
+        
         const totalDiv = document.createElement('div');
         totalDiv.style.cssText = `
             display: flex;
@@ -587,10 +646,13 @@ function confirmBtn(element) {
         totalDiv.appendChild(totalLabel);
         totalDiv.appendChild(totalValue);
 
+        
         orderItemsContainer.appendChild(totalDiv);
 
+        
         popUp.appendChild(orderItemsContainer);
 
+        
         const newOrderButton = document.createElement('button');
         newOrderButton.innerText = 'Start New Order';
         newOrderButton.style.cssText = `
@@ -607,15 +669,21 @@ function confirmBtn(element) {
             transition: background-color 0.2s ease;
         `;
 
-        newOrderButton.addEventListener('mouseenter', () => newOrderButton.style.backgroundColor = 'hsl(14, 76%, 32%)'); // Darker hover
+        newOrderButton.addEventListener('mouseenter', () => newOrderButton.style.backgroundColor = 'hsl(14, 76%, 32%)'); 
         newOrderButton.addEventListener('mouseleave', () => newOrderButton.style.backgroundColor = 'hsl(14, 86%, 42%)');
 
         newOrderButton.addEventListener('click', function () {
-                if (body.contains(overlay)) {
-                    body.removeChild(overlay);
-                }
+            if (body.contains(overlay)) {
+                body.removeChild(overlay);
+            }
 
-                totalItems = 0;
+            // Reset all item borders
+            const allImgContainers = document.querySelectorAll('.item .img');
+            allImgContainers.forEach(container => {
+                container.style = '';
+            });
+
+            totalItems = 0;
             cartItemNames = [];
 
             const cart = document.querySelector('.cart');
@@ -628,16 +696,16 @@ function confirmBtn(element) {
                 cart.innerHTML = `
                     <h2>Your Cart (0)</h2>
                     <div class="content">
-                <img src="./assets/images/illustration-empty-cart.svg" alt="" style="width: 100px; margin-top: 1rem;">
-                <p>Your added items will appear here</p>
+                        <img src="./assets/images/illustration-empty-cart.svg" alt="" style="width: 100px; margin-top: 1rem;">
+                        <p>Your added items will appear here</p>
                     </div>
-            `;
+                `;
 
                 cart.style.height = '240px'; 
-        }
+            }
 
-        const allButtons = document.querySelectorAll('.item button');
-        allButtons.forEach(button => {
+            const allButtons = document.querySelectorAll('.item button');
+            allButtons.forEach(button => {
                 const quantityControl = button.querySelector('div');
                 if (quantityControl) {
                     button.removeChild(quantityControl);
@@ -654,44 +722,21 @@ function confirmBtn(element) {
 
             orderInformation = null;
             contentCart = null;
-
-            const content = cart.querySelector('.content');
-            if (content) {
-                content.classList.remove('content-cart');
-                content.style.cssText = `
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: center;
-                `;
-            }
-
-            const orderInfo = cart.querySelector('.Order-info');
-            if (orderInfo) {
-                orderInfo.remove();
-            }
-
-            const listInfo1 = cart.querySelector('.list-info-1');
-            const listInfo2 = cart.querySelector('.list-info-2');
-            const btnConfirm = cart.querySelector('.btn-Confirm');
-            
-            if (listInfo1) listInfo1.remove();
-            if (listInfo2) listInfo2.remove();
-            if (btnConfirm) btnConfirm.remove();
-
-            updateDisplay();
         });
 
         popUp.appendChild(newOrderButton);
 
+        
         overlay.appendChild(popUp);
         body.appendChild(overlay);
 
+        
         requestAnimationFrame(() => {
             overlay.style.opacity = '1';
             popUp.style.transform = 'scale(1)';
         });
 
+        
     });
 }
 
@@ -707,16 +752,25 @@ function OrderInfo(clickedBtn, name, price) {
     }
 
     if (existingOrderItem) {
-        const quantitySpan = existingOrderItem.querySelector('p');
+        const quantitySpan = existingOrderItem.querySelector('.quantity');
         if (quantitySpan) {
             let currentQuantity = parseInt(quantitySpan.innerText);
-            quantitySpan.innerText = currentQuantity + 1;
+            currentQuantity++;
+            
+            
+            quantitySpan.innerText = `${currentQuantity}x`;
+
+            
+            const counterDisplay = clickedBtn.querySelector('div p');
+            if (counterDisplay) {
+                counterDisplay.innerText = currentQuantity;
+            }
+
             const oneitemPriceSpan = existingOrderItem.querySelector('.oneitemPrice');
             const itemsPriceSpan = existingOrderItem.querySelector('.itemsPrice');
             if (oneitemPriceSpan && itemsPriceSpan) {
                 const unitPrice = parseFloat(oneitemPriceSpan.innerText.replace('@ $', ''));
-
-                itemsPriceSpan.innerText = ` $ ${(unitPrice * (currentQuantity + 1)).toFixed(2)}`;
+                itemsPriceSpan.innerText = ` $ ${(unitPrice * currentQuantity).toFixed(2)}`;
                 updateCartTotal();
             }
         }
@@ -746,6 +800,14 @@ function OrderInfo(clickedBtn, name, price) {
                 const quantityToRemove = parseInt(itemToRemove.querySelector('.quantity').innerText.replace('x', ''));
                 const relatedItemDiv = Array.from(item).find(div => div.querySelector('.info span').textContent === itemNameToRemove);
                 
+                // Reset the border of the removed item
+                if (relatedItemDiv) {
+                    const imgContainer = relatedItemDiv.querySelector('.img');
+                    if (imgContainer) {
+                        imgContainer.style = '';
+                    }
+                }
+
                 itemToRemove.remove();
                 
                 totalItems -= quantityToRemove;
@@ -771,10 +833,13 @@ function OrderInfo(clickedBtn, name, price) {
                     }
                 }
 
+                
                 const remainingItems = orderInformation.querySelectorAll('.order-Info-main');
                 if (remainingItems.length === 0) {
+                    
                     const cart = document.querySelector('.cart');
                     if (cart) {
+                        
                         cart.innerHTML = `
                             <h2>Your Cart (0)</h2>
                             <div class="content">
@@ -783,7 +848,9 @@ function OrderInfo(clickedBtn, name, price) {
                             </div>
                         `;
 
+                        
                         cart.style.height = '240px';
+                        
                         
                         const content = cart.querySelector('.content');
                         if (content) {
@@ -795,24 +862,30 @@ function OrderInfo(clickedBtn, name, price) {
                             `;
                         }
 
+                        
                         const allButtons = document.querySelectorAll('.item button');
                         allButtons.forEach(button => {
+                            
                             const newButton = document.createElement('button');
                             newButton.innerHTML = '<img src="./assets/images/icon-add-to-cart.svg" alt="">Add to Cart';
                             newButton.type = 'button';
                             newButton.removeAttribute('style');
                             newButton.disabled = false;
                             
+                            
                             button.parentNode.replaceChild(newButton, button);
+                            
                             
                             newButton.addEventListener('click', handler);
                         });
 
+                        
                         totalItems = 0;
                         cartItemNames = [];
                         orderInformation = null;
                         contentCart = null;
 
+                        
                         const listInfo1 = cart.querySelector('.list-info-1');
                         const listInfo2 = cart.querySelector('.list-info-2');
                         const btnConfirm = cart.querySelector('.btn-Confirm');
@@ -822,6 +895,7 @@ function OrderInfo(clickedBtn, name, price) {
                         if (btnConfirm) btnConfirm.remove();
                     }
                 } else {
+                    
                     updateDisplay();
                     updateCartTotal();
                     updateCartHeight();
@@ -857,6 +931,7 @@ function OrderInfo(clickedBtn, name, price) {
                 detail.appendChild(itemsPrice);
                 updateCartTotal();
 
+                
                 updateCartHeight();
             }
 
@@ -882,19 +957,23 @@ function updateCartHeight() {
     const cart = document.querySelector('.cart');
     const orderInfoItems = document.querySelectorAll('.order-Info-main');
     const baseHeight = 240; 
-    const additionalHeightPerItem = 80;
+    const additionalHeightPerItem = 80; 
 
     if (orderInfoItems.length === 0) {
+        
         cart.style.height = `${baseHeight}px`;
 
+        
         const cartHeading = cart.querySelector('h2');
         const contentDiv = cart.querySelector('.content');
         const cartTextElement = contentDiv?.querySelector('p');
 
+        
         if (cartHeading) {
             cartHeading.innerText = 'Your Cart (0)';
         }
 
+        
         if (contentDiv) {
             contentDiv.innerHTML = `
                 <img src="./assets/images/illustration-empty-cart.svg" alt="" style="width: 100px; margin-top: 1rem;">
@@ -903,33 +982,44 @@ function updateCartHeight() {
             contentDiv.classList.remove('content-cart');
         }
 
+        
         const allButtons = document.querySelectorAll('.item button');
         allButtons.forEach(button => {
+            
             const newButton = document.createElement('button');
 
+            
             Array.from(button.attributes).forEach(attr => {
                 newButton.setAttribute(attr.name, attr.value);
             });
 
+            
             newButton.innerHTML = '<img src="./assets/images/icon-add-to-cart.svg" alt="">Add to Cart';
 
+            
             newButton.style = '';
 
+            
             button.parentNode.replaceChild(newButton, button);
 
+            
             newButton.addEventListener('click', handler);
         });
 
+        
         if (orderInformation) {
             orderInformation.innerHTML = '';
         }
     } else {
+        
         const newHeight = baseHeight + (orderInfoItems.length * additionalHeightPerItem);
         cart.style.height = `${newHeight}px`;
     }
 }
 
+
 function removeItem(element, itemName) {
+    
     let cartItem;
     if (element.classList.contains('order-Info-main')) {
         cartItem = element;
@@ -939,30 +1029,43 @@ function removeItem(element, itemName) {
     }
     
     if (cartItem) {
+        
         const quantityToRemove = parseInt(cartItem.querySelector('.quantity').innerText.replace('x', ''));
+        
         
         cartItem.remove();
         
+        
         totalItems -= quantityToRemove;
+        
         
         const itemDiv = Array.from(document.querySelectorAll('.item')).find(item =>
             item.querySelector('.info span').textContent === itemName
         );
         
         if (itemDiv) {
+            const imgContainer = itemDiv.querySelector('.img');
+            if (imgContainer) {
+                imgContainer.style.border = 'none';
+            }
+
             const button = itemDiv.querySelector('button');
             if (button) {
+                
                 const newButton = document.createElement('button');
                 newButton.innerHTML = '<img src="./assets/images/icon-add-to-cart.svg" alt="">Add to Cart';
                 newButton.type = 'button';
                 newButton.removeAttribute('style');
                 newButton.disabled = false;
                 
+                
                 button.parentNode.replaceChild(newButton, button);
+                
                 
                 newButton.addEventListener('click', handler);
             }
         }
+        
         
         const index = cartItemNames.indexOf(itemName);
         if (index > -1) {
@@ -971,6 +1074,7 @@ function removeItem(element, itemName) {
         
         updateCartTotal();
         updateDisplay();
+        
         
         if (orderInformation && orderInformation.children.length === 0) {
             resetCartToInitialState();
@@ -981,6 +1085,12 @@ function removeItem(element, itemName) {
 function resetAllButtons() {
     const allButtons = document.querySelectorAll('.item button');
     allButtons.forEach(button => {
+        const itemDiv = button.closest('.item');
+        const imgContainer = itemDiv.querySelector('.img');
+        if (imgContainer) {
+            imgContainer.style.border = 'none';
+        }
+
         const quantityControl = button.querySelector('div');
         if (quantityControl) {
             button.removeChild(quantityControl);
@@ -997,6 +1107,7 @@ function resetAllButtons() {
     });
 }
 
+
 function resetCartToInitialState() {
     totalItems = 0;
     cartItemNames = [];
@@ -1005,6 +1116,12 @@ function resetCartToInitialState() {
     if (cartHeading) {
         cartHeading.innerText = 'Your Cart (0)';
     }
+
+    // Reset all item borders
+    const allImgContainers = document.querySelectorAll('.item .img');
+    allImgContainers.forEach(container => {
+        container.style = '';
+    });
 
     const cart = document.querySelector('.cart');
     if (cart) {
@@ -1034,4 +1151,3 @@ function resetCartToInitialState() {
 }
 
 window.addEventListener('DOMContentLoaded', initializeButtons);
-
